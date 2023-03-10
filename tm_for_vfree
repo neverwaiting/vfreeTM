@@ -16,6 +16,7 @@
 
     // Your code here...
     const temp_email_url = "https://temp-mail.org/en"
+    const index_url = "https://w1.v2free.net/"
     const user_url = "https://w1.v2free.net/user"
     const register_url = "https://w1.v2free.net/auth/register"
     const login_url = "https://w1.v2free.net/auth/login"
@@ -52,14 +53,23 @@
             console.log("邮箱已经被注册了")
             window.location.href = register_url
         } else {
-            window.location.href = user_url
+            // window.location.href = user_url
             console.log("forward to user url")
         }
+    } else if (window.location.href == index_url) {
+        window.location.href = register_url
     } else if (window.location.href == login_url) {
         console.log("will forward to temp email website")
         window.location.href = register_url
     } else if (window.location.href == user_url) {
         console.log("welcome to user html")
+        let remain_data = document.getElementById('remain').innerHTML
+        let remain_number = Number(remain_data.substring(0, remain_data.length - 2))
+        console.log('remain: ' + remain_number)
+        if (remain_number < 0) {
+            console.log('log out')
+            window.location.href = '/user/logout'
+        }
     } else if (window.location.href === temp_email_url) {
         let s = setInterval(function() {
             var copy_btn = document.getElementsByClassName("btn-rds icon-btn bg-theme d-none visable-xs-sm click-to-copy copyIconGreenBtn")[0]
