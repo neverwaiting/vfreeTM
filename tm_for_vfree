@@ -1,0 +1,77 @@
+// ==UserScript==
+// @name         VPNFREE
+// @namespace    https://zwled.xyz/
+// @version      0.1
+// @description  script for vmess node
+// @author       wintersun
+// @match        https://temp-mail.org/*
+// @match        https://w1.v2free.net/*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=bing.com
+// @grant        GM_setValue
+// @grant        GM_getValue
+// ==/UserScript==
+(function() {
+    'use strict';
+
+
+    // Your code here...
+    const temp_email_url = "https://temp-mail.org/en"
+    const user_url = "https://w1.v2free.net/user"
+    const register_url = "https://w1.v2free.net/auth/register"
+    const login_url = "https://w1.v2free.net/auth/login"
+    console.log('location href: ' + window.location.href)
+
+    const numberAlpha = "123456789abcdefghijklmnopqrstuvwxyz"
+    const emailPostfix = ["163.com", "qq.com", "gmail.com", "yahoo.com", "msn.com", "126.com"]
+    const generateRandomEmail = function() {
+        let email_str = ""
+        const n = Math.floor(Math.random() * 10) % 10
+        for (let i = 0; i < n; ++i) {
+            let idx = Math.floor(Math.random() * 100) % numberAlpha.length
+            email_str += numberAlpha[idx]
+        }
+        email_str += "@"
+        let postfix_idx = Math.floor(Math.random() * 100) % emailPostfix.length
+        email_str += emailPostfix[postfix_idx]
+        return email_str
+    }
+
+    if (window.location.href == register_url) {
+        console.log("welcome to register html")
+        let tempEmail = generateRandomEmail()
+        console.log('generate email: ' + tempEmail)
+        document.getElementById('email').value = tempEmail
+        document.getElementById('passwd').value = '12345678'
+        document.getElementById('repasswd').value = '12345678'
+        document.getElementById('tos').click()
+
+        document.getElementById('reg').click()
+        var repeat_email_message = document.getElementById('msg')
+        console.log(repeat_email_message)
+        if (repeat_email_message) {
+            console.log("邮箱已经被注册了")
+            window.location.href = register_url
+        } else {
+            window.location.href = user_url
+            console.log("forward to user url")
+        }
+    } else if (window.location.href == login_url) {
+        console.log("will forward to temp email website")
+        window.location.href = register_url
+    } else if (window.location.href == user_url) {
+        console.log("welcome to user html")
+    } else if (window.location.href === temp_email_url) {
+        let s = setInterval(function() {
+            var copy_btn = document.getElementsByClassName("btn-rds icon-btn bg-theme d-none visable-xs-sm click-to-copy copyIconGreenBtn")[0]
+            var email_input = document.getElementById('mail')
+            if (email_input && !email_input.hasAttribute('disabledText') && copy_btn && !copy_btn.hasAttribute('disabled')) {
+                console.log(email_input.value)
+                clearInterval(s)
+                GM_setValue('tempEmail', email_input.value)
+                window.location.href = register_url
+                // var refresh_btn = document.getElementById('click-to-delete')
+                // refresh_btn.click()
+            }
+        }, 100)
+    }
+})();
