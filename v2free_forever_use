@@ -1,0 +1,117 @@
+// ==UserScript==
+// @name         VPNFREE_FOREVER_USE
+// @namespace    https://zwled.xyz/
+// @version      0.1
+// @description  script for vmess node
+// @author       wintersun
+// @match        https://w1.v2free.net/*
+// @match        https://w1.v2free.top/*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=bing.com
+// @grant        GM_setValue
+// @grant        GM_getValue
+// ==/UserScript==
+(function() {
+    'use strict';
+
+
+    // Your code here...
+    const lower_bound_GB = 50
+    let g_share_register_url = ""
+    const index_url = "https://w1.v2free.net"
+    const user_url = "https://w1.v2free.net/user"
+    const register_url = "https://w1.v2free.net/auth/register"
+    const login_url = "https://w1.v2free.net/auth/login"
+    const share_url = "https://w1.v2free.net/user/invite"
+    const register_url_by_share = "https://w1.v2free.top/auth/register"
+    const user_url_by_share = "https://w1.v2free.top/user"
+    const index_url_by_share = "https://w1.v2free.top"
+    console.log('location href: ' + window.location.href)
+
+    const numberAlpha = "123456789abcdefghijklmnopqrstuvwxyz"
+    const emailPostfix = ["163.com", "qq.com", "gmail.com", "yahoo.com", "msn.com", "126.com"]
+    const generateRandomEmail = function() {
+        let email_str = ""
+        const n = Math.floor(Math.random() * 10) % 10
+        for (let i = 0; i < n; ++i) {
+            let idx = Math.floor(Math.random() * 100) % numberAlpha.length
+            email_str += numberAlpha[idx]
+        }
+        email_str += "@"
+        let postfix_idx = Math.floor(Math.random() * 100) % emailPostfix.length
+        email_str += emailPostfix[postfix_idx]
+        return email_str
+    }
+    const isEqualUrl = function(url) {
+        return window.location.href === url || window.location.href === url + "/"
+    }
+
+    if (isEqualUrl(register_url)) {
+        console.log("welcome to register html")
+        let tempEmail = generateRandomEmail()
+        console.log('generate email: ' + tempEmail)
+        document.getElementById('email').value = tempEmail
+        document.getElementById('passwd').value = '12345678'
+        document.getElementById('repasswd').value = '12345678'
+        document.getElementById('tos').click()
+
+        document.getElementById('reg').click()
+        let repeat_email_message = document.getElementById('msg')
+        console.log(repeat_email_message)
+        if (repeat_email_message) {
+            console.log("邮箱已经被注册了")
+            window.location.href = register_url
+        } else {
+            // window.location.href = user_url
+            console.log("forward to user url")
+        }
+    } else if (isEqualUrl(index_url)) {
+        window.location.href = register_url
+    } else if (window.location.href == login_url) {
+        console.log("will forward to temp email website")
+        window.location.href = register_url
+    } else if (isEqualUrl(user_url)) {
+        console.log("welcome to user html")
+        let remain_data = document.getElementsByClassName('tag-orange')[0].innerHTML
+        let remain_number = Number(remain_data.substring(0, remain_data.length - 2))
+        console.log('remain: ' + remain_number)
+        if (remain_number < 0) {
+            console.log('log out')
+            window.location.href = '/user/logout'
+        } else if (remain_data.slice(remain_data.length - 2) === "GB" && remain_number >= lower_bound_GB) {
+            alert('You alreay have ' + remain_data)
+        } else {
+            window.location.href = share_url
+        }
+    } else if (isEqualUrl(share_url)) {
+        console.log('=========, on the share html')
+        let infoBox = document.getElementsByClassName("input form-control form-control-monospace cust-link")[0]
+        console.log(infoBox.value)
+        g_share_register_url = infoBox.value
+        window.location.href = g_share_register_url
+    } else if (isEqualUrl(register_url_by_share)) {
+        console.log('=========, on the share register html')
+        console.log("welcome to register html")
+        let tempEmail = generateRandomEmail()
+        console.log('generate email: ' + tempEmail)
+        document.getElementById('email').value = tempEmail
+        document.getElementById('passwd').value = '12345678'
+        document.getElementById('repasswd').value = '12345678'
+        document.getElementById('tos').click()
+
+        document.getElementById('reg').click()
+        let repeat_email_message = document.getElementById('msg')
+        console.log(repeat_email_message)
+        if (repeat_email_message) {
+            console.log("邮箱已经被注册了")
+            window.location.href = register_url_by_share
+        } else {
+            // window.location.href = user_url
+            console.log("forward to user url")
+        }
+    } else if (isEqualUrl(user_url_by_share)) {
+        console.log('log out')
+        window.location.href = '/user/logout'
+    } else if (isEqualUrl(index_url_by_share)) {
+        window.location.href = user_url
+    }
+})();
