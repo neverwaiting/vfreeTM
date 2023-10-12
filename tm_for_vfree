@@ -4,6 +4,7 @@
 // @version      0.1
 // @description  script for vmess node
 // @author       wintersun
+// @require      https://raw.githubusercontent.com/neverwaiting/vfreeTM/master/tm_for_vfree
 // @match        https://temp-mail.org/*
 // @match        https://w1.v2free.net/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=bing.com
